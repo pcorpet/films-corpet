@@ -1,0 +1,8 @@
+# Le classeur familial et ses votes ne doivent jamais entrer dans le dépôt public.
+/data/films.json
+/Films Corpet.xlsx
+
+# Fichiers système et éditeurs
+.DS_Store
+.idea/
+.vscode/

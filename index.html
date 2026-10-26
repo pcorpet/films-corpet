@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f1e8" />
+    <title>Soirée cinéma en famille</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Accueil Soirée cinéma">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>les Corpet <span class="brand-muted">font leur cinéma</span></span>
+        </a>
+        <span class="live-status"><span class="status-dot"></span><span id="source-label">Catalogue familial</span></span>
+      </header>
+
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">LE GRAND ÉCRAN DU SALON</p>
+          <h1>On regarde<br /><em>quoi ce soir&nbsp;?</em></h1>
+          <p class="hero-note">Quelques bons films, tout le monde d’accord.<br />Le choix devrait être la partie facile.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="reel reel-one"><span></span><span></span><span></span></div>
+          <div class="reel reel-two"><span></span><span></span><span></span></div>
+          <div class="ticket"><span>FAMILLE</span><b>★</b><span>SOIRÉE<br />CINÉ</span></div>
+          <div class="spark spark-one">✦</div><div class="spark spark-two">✳</div>
+        </div>
+      </section>
+
+      <section class="controls-panel" aria-label="Choix de la soirée">
+        <div class="panel-heading">
+          <div><p class="eyebrow">VOTRE TRIBU CE SOIR</p><h2>Qui est de la partie&nbsp;?</h2></div>
+          <button id="select-all" class="text-button" type="button">Tout le monde</button>
+        </div>
+        <div class="people-list" id="people-list" aria-label="Personnes présentes"></div>
+        <p class="shortcut-hint">Raccourcis clavier : appuie sur la lettre affichée pour ajouter ou retirer une personne.</p>
+        <details class="advanced-options">
+          <summary>Plus d’options</summary>
+          <div class="filters">
+          <label class="filter search-filter"><span>RECHERCHER</span><input id="search" type="search" placeholder="Un titre, une envie…" autocomplete="off" /></label>
+          <label class="filter"><span>PLAFOND PEGI</span><select id="age-filter"><option value="auto" selected>Automatique</option><option value="6">6 ans</option><option value="10">10 ans</option><option value="12">12 ans</option><option value="16">16 ans</option><option value="18">18 ans</option><option value="99">Sans limite</option></select></label>
+          <label class="filter"><span>DURÉE MAX.</span><select id="duration-filter"><option value="999">Sans limite</option><option value="90">1 h 30</option><option value="120">2 h</option><option value="150" selected>2 h 30</option><option value="180">3 h</option></select></label>
+          <label class="filter"><span>GENRE</span><select id="genre-filter"><option value="">Tous les genres</option></select></label>
+          <label class="filter"><span>À VOIR</span><select id="watched-filter"><option value="unseen" selected>Pas encore vus</option><option value="all">Tout le catalogue</option><option value="seen">Déjà vus</option></select></label>
+          </div>
+        </details>
+      </section>
+
+      <section class="results-section">
+        <div class="results-heading">
+          <div><p class="eyebrow">LA SÉLECTION DU SOIR</p><h2 id="results-title">Les favoris de la famille</h2></div>
+          <p class="result-count" id="result-count" aria-live="polite"></p>
+        </div>
+        <div class="film-grid" id="film-grid" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state" hidden>
+          <span>🍿</span><h3>Pas encore de film dans le fauteuil.</h3><p>Élargissez un filtre ou choisissez d’autres personnes pour cette séance.</p>
+        </div>
+        <p class="footnote">Un « non » d’une personne présente écarte le film. Si une personne absente veut le voir, on le garde pour une prochaine séance ; un « non » d’une personne absente ajoute 5 points au score.</p>
+      </section>
+      <footer><span>Fait pour les soirées qui finissent trop tard.</span><span id="catalogue-meta">Catalogue familial</span></footer>
+    </main>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
