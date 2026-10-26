@@ -113,6 +113,7 @@ function activeAgeLimit() {
 
 function renderPeople() {
   const list = el("people-list");
+  list.classList.remove("skeleton-people");
   el("shortcut-hint").hidden = touchInput;
   list.innerHTML = state.data.members.map((name) => {
     const shortcut = name.trim().slice(0, 1).toLocaleUpperCase("fr");
@@ -203,6 +204,7 @@ function renderFilms() {
     return second.score - first.score || second.ratio - first.ratio || a.title.localeCompare(b.title, "fr");
   });
   const grid = el("film-grid");
+  grid.classList.remove("skeleton-grid");
   grid.innerHTML = candidates.slice(0, 48).map(renderFilmCard).join("");
   el("empty-state").hidden = candidates.length > 0;
   el("result-count").textContent = `${candidates.length} film${candidates.length > 1 ? "s" : ""} correspondent`;
@@ -217,13 +219,25 @@ function renderFilms() {
 }
 
 function showError(error) {
+  document.querySelector(".controls-panel").hidden = true;
+  el("results-title").textContent = "Chargement impossible";
+  el("film-grid").classList.remove("skeleton-grid");
   el("film-grid").innerHTML = `<div class="error-card">${escapeHtml(error.message || "Le catalogue n'a pas pu être chargé.")}</div>`;
   el("result-count").textContent = "";
   el("empty-state").hidden = true;
 }
 
+function setLoading(loading) {
+  const controls = document.querySelector(".controls-panel");
+  const results = document.querySelector(".results-section");
+  controls.inert = loading;
+  controls.setAttribute("aria-busy", String(loading));
+  results.setAttribute("aria-busy", String(loading));
+}
+
 async function start() {
   state.seen = readSeen();
+  setLoading(true);
   try {
     state.data = await loadCatalogue();
     const spreadsheetUrl = String(state.data.spreadsheetUrl || "");
@@ -237,6 +251,7 @@ async function start() {
     } catch { /* L'aperçu local ne fournit pas de lien vers un classeur. */ }
     state.films = state.data.films || [];
     state.selectedMembers = new Set(state.data.members || []);
+    setLoading(false);
     renderPeople();
     renderGenres();
     refreshAgeLimitLabel();
@@ -244,7 +259,7 @@ async function start() {
     if (!touchInput) document.addEventListener("keydown", handleMemberShortcut);
     ["search", "age-filter", "duration-filter", "genre-filter", "watched-filter"].forEach((id) => el(id).addEventListener(id === "search" ? "input" : "change", renderFilms));
     el("select-all").addEventListener("click", () => { state.selectedMembers = new Set(state.data.members); renderPeople(); refreshAgeLimitLabel(); renderFilms(); });
-  } catch (error) { showError(error); }
+  } catch (error) { setLoading(false); showError(error); }
 }
 
 start();

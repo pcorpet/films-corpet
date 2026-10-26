@@ -42,12 +42,20 @@
         </div>
       </section>
 
-      <section class="controls-panel" aria-label="Choix de la soirée">
+      <section class="controls-panel" aria-label="Choix de la soirée" aria-busy="true" inert>
         <div class="panel-heading">
           <div><p class="eyebrow">VOTRE TRIBU CE SOIR</p><h2>Qui est de la partie&nbsp;?</h2></div>
           <button id="select-all" class="text-button" type="button">Tout le monde</button>
         </div>
-        <div class="people-list" id="people-list" aria-label="Personnes présentes"></div>
+        <div class="people-list skeleton-people" id="people-list" aria-label="Personnes présentes">
+          <span class="skeleton-chip" style="--chip-width: 104px"></span>
+          <span class="skeleton-chip" style="--chip-width: 88px"></span>
+          <span class="skeleton-chip" style="--chip-width: 116px"></span>
+          <span class="skeleton-chip" style="--chip-width: 94px"></span>
+          <span class="skeleton-chip" style="--chip-width: 108px"></span>
+          <span class="skeleton-chip" style="--chip-width: 84px"></span>
+          <span class="skeleton-chip" style="--chip-width: 100px"></span>
+        </div>
         <p class="shortcut-hint">Raccourcis clavier : appuie sur la lettre affichée pour ajouter ou retirer une personne.</p>
         <details class="advanced-options">
           <summary>Plus d’options</summary>
@@ -61,12 +69,19 @@
         </details>
       </section>
 
-      <section class="results-section">
+      <section class="results-section" aria-busy="true">
         <div class="results-heading">
           <div><p class="eyebrow">LA SÉLECTION DU SOIR</p><h2 id="results-title">Les favoris de la famille</h2></div>
-          <p class="result-count" id="result-count" aria-live="polite"></p>
+          <p class="result-count loading-count" id="result-count" aria-live="polite"><span>Chargement des films…</span><span class="skeleton-count" aria-hidden="true"></span></p>
         </div>
-        <div class="film-grid" id="film-grid" aria-live="polite"></div>
+        <div class="film-grid skeleton-grid" id="film-grid" aria-live="polite" aria-label="Chargement des films">
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+        </div>
         <div class="empty-state" id="empty-state" hidden>
           <span>🍿</span><h3>Pas encore de film dans le fauteuil.</h3><p>Élargissez un filtre ou choisissez d’autres personnes pour cette séance.</p>
         </div>
