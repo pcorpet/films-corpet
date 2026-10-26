@@ -1,5 +1,6 @@
 const FAMILY_KEY = "films-corpet-seen-v1";
 const CACHE_KEY = "films-corpet-catalogue-v1";
+const OFFLINE_KEY = "films-corpet-catalogue-offline-v1";
 const CACHE_TTL = 3 * 60 * 1000;
 const state = { data: null, selectedMembers: new Set(), films: [], genres: [], seen: new Set() };
 const el = (id) => document.getElementById(id);
@@ -37,17 +38,28 @@ async function loadCatalogue() {
   }
 
   try {
-    const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null");
+    let cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null"); } catch { /* Le cache de session est facultatif. */ }
     if (cached && Date.now() - cached.savedAt < CACHE_TTL) {
       el("source-label").textContent = "Feuille familiale";
       return cached.data;
     }
-  } catch { /* Le navigateur a peut-être bloqué le stockage local. */ }
-
-  const data = await loadJsonp(apiUrl);
-  try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data })); } catch { /* Le cache est facultatif. */ }
-  el("source-label").textContent = "Feuille familiale";
-  return data;
+    const data = await loadJsonp(apiUrl);
+    const saved = JSON.stringify({ savedAt: Date.now(), data });
+    try { sessionStorage.setItem(CACHE_KEY, saved); } catch { /* Le cache de session est facultatif. */ }
+    try { localStorage.setItem(OFFLINE_KEY, saved); } catch { /* Le cache hors ligne est facultatif. */ }
+    el("source-label").textContent = "Feuille familiale";
+    return data;
+  } catch (error) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "null");
+      if (cached?.data) {
+        el("source-label").textContent = "Catalogue hors ligne";
+        return cached.data;
+      }
+    } catch { /* Le cache a peut-être été effacé ou est illisible. */ }
+    throw error;
+  }
 }
 
 function escapeHtml(value) {
@@ -225,3 +237,22 @@ async function start() {
 }
 
 start();
+
+let installPrompt = null;
+const installButton = el("install-app");
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  installButton.hidden = false;
+});
+installButton.addEventListener("click", async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  installButton.hidden = true;
+});
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  installButton.hidden = true;
+});

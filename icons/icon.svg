@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#df693b"/>
+  <g transform="rotate(-7 256 256)">
+    <rect x="91" y="227" width="330" height="190" rx="20" fill="#f5f1e8"/>
+    <rect x="105" y="241" width="302" height="162" rx="11" fill="#335d4c"/>
+    <path d="M105 294h302M105 350h302" stroke="#d9e2c7" stroke-width="9"/>
+    <g fill="#d9e2c7">
+      <rect x="128" y="258" width="48" height="22" rx="5"/><rect x="198" y="258" width="48" height="22" rx="5"/><rect x="268" y="258" width="48" height="22" rx="5"/><rect x="338" y="258" width="48" height="22" rx="5"/>
+      <rect x="128" y="314" width="48" height="22" rx="5"/><rect x="198" y="314" width="48" height="22" rx="5"/><rect x="268" y="314" width="48" height="22" rx="5"/><rect x="338" y="314" width="48" height="22" rx="5"/>
+      <rect x="128" y="370" width="48" height="22" rx="5"/><rect x="198" y="370" width="48" height="22" rx="5"/><rect x="268" y="370" width="48" height="22" rx="5"/><rect x="338" y="370" width="48" height="22" rx="5"/>
+    </g>
+    <path d="M116 222l-18-98a18 18 0 0 1 14-21l270-50a18 18 0 0 1 21 14l18 98z" fill="#f5f1e8"/>
+    <path d="M121 197l-9-50 45-8 9 50zm76-14-9-50 45-8 9 50zm76-14-9-50 45-8 9 50zm76-14-9-50 45-8 9 50z" fill="#335d4c"/>
+  </g>
+</svg>
