@@ -1,4 +1,4 @@
-const CACHE_NAME = "films-corpet-shell-v2";
+const CACHE_NAME = "films-corpet-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
