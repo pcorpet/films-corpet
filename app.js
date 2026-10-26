@@ -4,6 +4,7 @@ const OFFLINE_KEY = "films-corpet-catalogue-offline-v1";
 const CACHE_TTL = 3 * 60 * 1000;
 const state = { data: null, selectedMembers: new Set(), films: [], genres: [], seen: new Set() };
 const el = (id) => document.getElementById(id);
+const touchInput = navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia("(pointer: coarse), (max-width: 600px)").matches);
 
 function readSeen() {
   try { return new Set(JSON.parse(localStorage.getItem(FAMILY_KEY) || "[]")); }
@@ -112,11 +113,12 @@ function activeAgeLimit() {
 
 function renderPeople() {
   const list = el("people-list");
+  el("shortcut-hint").hidden = touchInput;
   list.innerHTML = state.data.members.map((name) => {
     const shortcut = name.trim().slice(0, 1).toLocaleUpperCase("fr");
     return `
-      <button class="person-chip" type="button" aria-pressed="${state.selectedMembers.has(name)}" aria-keyshortcuts="${escapeHtml(shortcut)}" data-person="${escapeHtml(name)}">
-        <span>${escapeHtml(name)}</span><kbd class="shortcut-key">${escapeHtml(shortcut)}</kbd>
+      <button class="person-chip" type="button" aria-pressed="${state.selectedMembers.has(name)}" ${touchInput ? "" : `aria-keyshortcuts="${escapeHtml(shortcut)}"`} data-person="${escapeHtml(name)}">
+        <span>${escapeHtml(name)}</span>${touchInput ? "" : `<kbd class="shortcut-key">${escapeHtml(shortcut)}</kbd>`}
       </button>`;
   }).join("");
   list.querySelectorAll("[data-person]").forEach((button) => button.addEventListener("click", () => toggleMember(button.dataset.person)));
@@ -230,7 +232,7 @@ async function start() {
     renderGenres();
     refreshAgeLimitLabel();
     renderFilms();
-    document.addEventListener("keydown", handleMemberShortcut);
+    if (!touchInput) document.addEventListener("keydown", handleMemberShortcut);
     ["search", "age-filter", "duration-filter", "genre-filter", "watched-filter"].forEach((id) => el(id).addEventListener(id === "search" ? "input" : "change", renderFilms));
     el("select-all").addEventListener("click", () => { state.selectedMembers = new Set(state.data.members); renderPeople(); refreshAgeLimitLabel(); renderFilms(); });
   } catch (error) { showError(error); }

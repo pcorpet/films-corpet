@@ -73,7 +73,7 @@ body {
   margin: 0;
   font-weight: 700;
 }
-.hero h1 em { font-weight: 400; color: var(--green); letter-spacing: -3px; }
+.hero h1 em { display: block; font-weight: 400; color: var(--green); letter-spacing: -3px; }
 .hero-note { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 21px 0 0; }
 .hero-art { height: 277px; width: 400px; position: relative; margin-right: 24px; flex: 0 0 auto; }
 .sun { width: 234px; height: 234px; background: #efd6a2; border-radius: 50%; position: absolute; right: 58px; top: 15px; opacity: .75; }
@@ -196,26 +196,23 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px soli
   .film-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 600px) {
-  .page-shell { padding: 0 16px; padding-bottom: env(safe-area-inset-bottom); }
-  .topbar { min-height: 62px; height: auto; gap: 8px; }
-  .brand { font-size: 12px; }
-  .brand-muted { display: none; }
-  .brand-mark { flex: 0 0 30px; }
-  .topbar-actions { gap: 8px; }
-  .live-status { gap: 5px; font-size: 10px; }
+  .page-shell { padding: 0 12px; padding-bottom: env(safe-area-inset-bottom); }
+  .topbar { min-height: 0; height: auto; border: 0; justify-content: flex-end; }
+  .brand, .live-status { display: none; }
+  .topbar-actions { justify-content: flex-end; }
   .install-button { min-height: 40px; padding-inline: 10px; }
-  .hero { min-height: 250px; }
-  .hero-copy { padding: 30px 0; }
-  .hero h1 { font-size: clamp(40px, 12vw, 52px); letter-spacing: -3px; }
-  .hero h1 em { letter-spacing: -2.5px; }
-  .hero-note { max-width: 280px; font-size: 13px; line-height: 1.55; }
-  .hero-art { position: absolute; right: -85px; opacity: .38; transform: scale(.72); }
-  .controls-panel { padding: 20px 14px 17px; border-radius: 14px; }
+  .hero { min-height: 0; margin: 8px 0 12px; overflow: visible; }
+  .hero .eyebrow, .hero-note, .hero-art, .results-heading .eyebrow, .footnote, footer { display: none; }
+  .hero-copy { width: 100%; padding: 12px 10px; border-radius: 12px; background: var(--green); color: white; text-align: center; }
+  .hero h1 { font-size: clamp(20px, 6.5vw, 24px); line-height: 1.15; letter-spacing: -.8px; }
+  .hero h1 em { display: inline; color: #e1ece5; letter-spacing: inherit; }
+  .controls-panel { padding: 14px 12px 10px; border-radius: 13px; }
+  .panel-heading .eyebrow { display: none; }
   .panel-heading, .results-heading { gap: 10px; align-items: flex-start; }
-  .panel-heading h2, .results-heading h2 { font-size: 18px; line-height: 1.2; }
+  .panel-heading h2, .results-heading h2 { font-size: 16px; line-height: 1.2; }
   .text-button { min-height: 44px; margin: -8px -7px -6px 0; white-space: nowrap; }
   .person-chip { min-height: 44px; padding: 6px 10px 6px 7px; font-size: 12px; }
-  .shortcut-key, .shortcut-hint { display: none; }
+  .shortcut-key, .shortcut-hint { display: none !important; }
   .people-list { gap: 7px; margin-top: 14px; }
   .advanced-options { margin-top: 12px; }
   .advanced-options summary { min-height: 44px; }
@@ -226,23 +223,20 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px soli
   .film-card { min-height: 164px; padding: 16px; }
   .film-card h3 { font-size: 18px; }
   .seen-toggle { min-height: 44px; padding: 8px 4px 8px 10px; font-size: 11px; }
-  .results-section { padding-top: 30px; }
-  .results-heading { align-items: flex-end; }
+  .results-section { padding-top: 20px; }
+  .results-heading { align-items: flex-end; margin-bottom: 12px; }
   .results-heading > div { min-width: 0; }
   .result-count { flex: 0 0 auto; font-size: 10px; }
-  .footnote { font-size: 11px; line-height: 1.55; }
-  footer { gap: 12px; font-size: 10px; line-height: 1.4; }
-  footer span:last-child { text-align: right; }
 }
 
 @media (max-width: 360px) {
-  .page-shell { padding-inline: 12px; }
-  .brand { gap: 7px; font-size: 11px; }
-  .live-status { max-width: 110px; }
-  .live-status span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .hero h1 { font-size: 39px; letter-spacing: -2.8px; }
-  .controls-panel { padding-inline: 11px; }
+  .hero h1 { font-size: 20px; }
+  .controls-panel { padding-inline: 10px; }
   .results-heading { flex-direction: column; align-items: flex-start; gap: 6px; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .shortcut-key, .shortcut-hint { display: none !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
