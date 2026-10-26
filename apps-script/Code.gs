@@ -20,7 +20,7 @@ function doGet(event) {
 function getFilms() {
   var properties = PropertiesService.getScriptProperties();
   var spreadsheetId = properties.getProperty('SPREADSHEET_ID');
-  var sheetName = properties.getProperty('FILM_SHEET_NAME') || 'Feuille 1';
+  var sheetName = properties.getProperty('FILM_SHEET_NAME') || 'Films';
   var membersSheetName = properties.getProperty('MEMBERS_SHEET_NAME') || 'Personnes';
   if (!spreadsheetId) {
     throw new Error('Configuration manquante : ajouter SPREADSHEET_ID dans les propriétés du script.');

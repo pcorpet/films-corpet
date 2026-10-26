@@ -17,7 +17,7 @@ Créer un petit site web accessible à la famille pour décider plus facilement 
 Le classeur de départ est privé et ne doit pas être copié dans le dépôt.
 
 - Onglet principal : films, colonnes `Film`, `PEGI`, `DUREE`, `Type de film`, `Dispo sur`, des colonnes de votes portant les prénoms des membres, `Score`, `Vue ?`, `Combo`.
-- Onglet `Feuille 1 (1)` : 250 films et une structure plus ancienne/simplifiée, sans colonne de disponibilité. L'onglet principal retenu pour le prototype est `Feuille 1`, car il contient davantage de films et la disponibilité. À confirmer avec le propriétaire avant branchement en direct.
+- L'onglet principal actuel s'appelle `Films`; le lecteur Apps Script l'utilise par défaut.
 - Les votes observés sont `1`, `0`, `-1` et des cellules vides. Formule relevée en `M4` : si une personne présente a voté `-1`, le résultat est « Pas envie » et le film est écarté; sinon, si une personne absente a voté `1`, le résultat est « Manque qqun » et le film est gardé pour une prochaine séance; sinon, score numérique = somme des votes des personnes présentes moins 5 fois la somme des votes des personnes absentes. Comme un « non » absent vaut `-1`, cette soustraction lui donne bien `+5` points. Un « oui » présent ajoute 1 point, neutre/vide valent 0. L'application applique ces mêmes règles et classe les candidats par score décroissant.
 - Les âges et genres des membres sont des données privées conservées dans l'onglet `Personnes` du Google Spreadsheet, jamais dans le dépôt GitHub. Le filtre automatique utilise l'âge estimé à partir de l'année de naissance; le filtre reste réglable manuellement.
 - Les catégories ne sont pas normalisées (`Science-Fiction`/`Science Fiction`, genres combinés, etc.). Pour l'instant l'app les reprend telles quelles.
@@ -45,7 +45,7 @@ Le dépôt public ne doit jamais contenir `data/films.json`, un export du classe
 1. Récupérer l'ID du Google Sheets depuis son URL.
 2. Créer un projet Apps Script et y copier `apps-script/Code.gs`.
 3. Dans les paramètres du projet Apps Script, créer la propriété de script `SPREADSHEET_ID` avec l'ID du classeur.
-4. Vérifier le nom réel de l'onglet et, si besoin, ajouter `FILM_SHEET_NAME` (par défaut `Feuille 1`). Créer un onglet `Personnes` avec les colonnes `Prénom`, `Année de naissance`, `Genre`; le nom de cet onglet peut être remplacé par `MEMBERS_SHEET_NAME` dans les propriétés du script.
+4. Le lecteur utilise `Films` pour le catalogue et `Personnes` pour la liste des membres. Le script accepte les propriétés `FILM_SHEET_NAME` et `MEMBERS_SHEET_NAME` pour remplacer ces noms. Dans `Personnes`, les en-têtes attendus sont `Prénom`, `Année de naissance` et `Genre`.
 5. Déployer le script comme application Web exécutée en tant que propriétaire et accessible à toute personne, puis vérifier son URL depuis une fenêtre privée.
 6. Renseigner l'URL `/exec` du déploiement dans `config.js` et publier le dépôt avec GitHub Pages (Settings > Pages).
 
@@ -53,7 +53,6 @@ La feuille ne sera pas modifiée. Le code Apps Script est à garder en lecture s
 
 ## Décisions à confirmer / questions ouvertes
 
-- Confirmer que `Feuille 1` est bien l'onglet vivant à utiliser (et non `Feuille 1 (1)`).
 - La formule historique et le traitement des votes vides/neutres ont été relevés; conserver cette logique lors des évolutions.
 - Confirmer si l'état « déjà vu » doit rester par navigateur ou être synchronisé avec la feuille (ce dernier choix nécessiterait une écriture autorisée, donc sort du mode lecture seule).
 - Les années de naissance, genres, noms et votes restent dans Google Sheets; la passerelle renvoie les champs nécessaires à l'interface publique. Ils ne sont pas stockés dans le dépôt GitHub.
