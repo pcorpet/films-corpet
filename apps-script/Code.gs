@@ -31,7 +31,7 @@ function getFilms() {
   if (!sheet) throw new Error('Onglet introuvable : ' + sheetName);
 
   var values = sheet.getDataRange().getDisplayValues();
-  if (values.length < 4) return { members: [], films: [] };
+  if (values.length < 4) return { members: [], films: [], spreadsheetUrl: spreadsheet.getUrl() };
 
   // Row 3 contains the headers; rows 4+ contain films. Ignore the formula control rows.
   var headers = values[2].map(function (value) { return String(value || '').trim(); });
@@ -57,7 +57,7 @@ function getFilms() {
       votes: votes
     };
   });
-  return { members: memberHeaders, memberInfo: memberData.memberInfo, films: films };
+  return { members: memberHeaders, memberInfo: memberData.memberInfo, films: films, spreadsheetUrl: spreadsheet.getUrl() };
 }
 
 /** Read member names and details from the spreadsheet, never from source code. */

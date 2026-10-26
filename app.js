@@ -226,6 +226,15 @@ async function start() {
   state.seen = readSeen();
   try {
     state.data = await loadCatalogue();
+    const spreadsheetUrl = String(state.data.spreadsheetUrl || "");
+    try {
+      const url = new URL(spreadsheetUrl);
+      if (url.protocol === "https:" && url.hostname === "docs.google.com" && url.pathname.startsWith("/spreadsheets/d/")) {
+        const link = el("spreadsheet-link");
+        link.href = url.href;
+        link.hidden = false;
+      }
+    } catch { /* L'aperçu local ne fournit pas de lien vers un classeur. */ }
     state.films = state.data.films || [];
     state.selectedMembers = new Set(state.data.members || []);
     renderPeople();

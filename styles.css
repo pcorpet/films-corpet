@@ -185,6 +185,9 @@ body {
 .empty-state p { font-size: 12px; color: var(--muted); margin: 0; }
 .footnote { font-size: 10px; color: #848176; margin: 15px 2px 0; }
 footer { display: flex; justify-content: space-between; border-top: 1px solid #ddd7ca; padding: 16px 0 23px; font-size: 10px; color: #89877c; }
+.spreadsheet-link { color: var(--green); font-size: 11px; font-weight: 700; text-decoration: none; }
+.spreadsheet-link:hover { text-decoration: underline; }
+.spreadsheet-link[hidden] { display: none; }
 .error-card { grid-column: 1 / -1; padding: 22px; border: 1px solid #e6bcab; border-radius: 12px; background: #fff5f0; color: #8c3e2a; font-size: 13px; line-height: 1.6; }
 button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid #78977f; outline-offset: 3px; }
 
@@ -227,6 +230,9 @@ button:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px soli
   .results-heading { align-items: flex-end; margin-bottom: 12px; }
   .results-heading > div { min-width: 0; }
   .result-count { flex: 0 0 auto; font-size: 10px; }
+  footer { display: flex; justify-content: center; border-top: 0; padding: 8px 0 18px; }
+  .footer-note, #catalogue-meta { display: none; }
+  .spreadsheet-link { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; }
 }
 
 @media (max-width: 360px) {
