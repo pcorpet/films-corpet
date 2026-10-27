@@ -6,7 +6,7 @@ Créer un petit site web accessible à la famille pour décider plus facilement 
 
 ## Préférences du produit
 
-- Site accessible publiquement, sans compte utilisateur prévu à ce stade.
+- Site réservé aux comptes Google auxquels le classeur est partagé.
 - Ne pas ajouter de service payant.
 - Lire le vrai Google Sheets en direct une fois la version de démonstration construite.
 - Utiliser le fichier Excel téléchargé comme source de travail initiale.
@@ -36,9 +36,9 @@ Le classeur de départ est privé et ne doit pas être copié dans le dépôt.
 
 ## Hébergement et connexion Google Sheets sans coût
 
-Piste retenue : dépôt GitHub public contenant uniquement le code, avec GitHub Pages pour l'interface statique et Google Apps Script comme passerelle en lecture seule vers Sheets. GitHub Pages est disponible avec GitHub Free pour les dépôts publics et ses limites annoncées sont largement supérieures au trafic attendu pour un usage familial. Apps Script lit uniquement les valeurs de l'onglet configuré sous le compte du propriétaire. L'interface appelle l'URL publique Apps Script via JSONP pour éviter de dépendre d'une configuration CORS.
+Architecture retenue : dépôt GitHub public contenant le code source, avec GitHub Pages comme page de redirection vers la Web App Apps Script qui sert l'interface. Le déploiement exige une connexion Google et s'exécute en tant qu'utilisateur accédant. Le script ouvre le classeur avec les droits de cette personne; le partage du Google Sheets avec les seuls comptes familiaux autorisés constitue le contrôle d'accès aux données. L'interface appelle `getFilmsForViewer` via `google.script.run` et ne met pas le catalogue en cache localement.
 
-Le dépôt public ne doit jamais contenir `data/films.json`, un export du classeur, des votes nominatifs, des années de naissance, des genres des membres, de credentials ou d'autres données privées. Un jeu de données local de démonstration est ignoré par Git. À la demande du propriétaire, le site et sa passerelle publique peuvent exposer les données des membres et les votes au navigateur; ces données viennent du Spreadsheet à l'exécution et ne sont pas codées dans le dépôt. Le déploiement public du script doit être vérifié depuis une fenêtre privée; les paramètres du compte Google Workspace peuvent restreindre l'accès anonyme. Apps Script applique des quotas susceptibles d'évoluer, mais ceux publiés sont très confortables pour les quelques visites attendues.
+Le dépôt public ne doit jamais contenir `data/films.json`, un export du classeur, des votes nominatifs, des années de naissance, des genres des membres, de credentials ou d'autres données privées. Un jeu de données local de démonstration est ignoré par Git. Le code de la Web App peut être public, mais il faut révoquer toute ancienne version de déploiement configurée en accès anonyme : changer le code source seul ne protège pas une ancienne URL/version active. Les utilisateurs autorisés peuvent conserver ou copier les informations qu'ils consultent dans leur navigateur.
 
 Étapes restantes pour relier le vrai classeur :
 
@@ -46,26 +46,29 @@ Le dépôt public ne doit jamais contenir `data/films.json`, un export du classe
 2. Créer un projet Apps Script et y copier `apps-script/Code.gs`.
 3. Dans les paramètres du projet Apps Script, créer la propriété de script `SPREADSHEET_ID` avec l'ID du classeur.
 4. Le lecteur utilise `Films` pour le catalogue et `Personnes` pour la liste des membres. Le script accepte les propriétés `FILM_SHEET_NAME` et `MEMBERS_SHEET_NAME` pour remplacer ces noms. Dans `Personnes`, les en-têtes attendus sont `Prénom`, `Année de naissance` et `Genre`.
-5. Déployer le script comme application Web exécutée en tant que propriétaire et accessible à toute personne, puis vérifier son URL depuis une fenêtre privée.
-6. Renseigner l'URL `/exec` du déploiement dans `config.js` et publier le dépôt avec GitHub Pages (Settings > Pages).
+5. Ajouter au projet Apps Script les fichiers `Code.gs`, `Index.html`, `Styles.html` et `Client.html` depuis `apps-script/`.
+6. Partager le classeur en lecture seule avec chaque compte Gmail familial autorisé.
+7. Mettre à jour la Web App avec accès « Toute personne disposant d'un compte Google » et exécution « Utilisateur accédant à l'application Web ». Ne pas choisir l'accès anonyme.
+8. Tester avec un compte autorisé et un autre compte non partagé. Le premier doit autoriser le script; le second ne doit pas pouvoir lire les données. Désactiver ou supprimer tout ancien déploiement anonyme.
+9. GitHub Pages sert `index.html`, qui redirige vers l'URL `/exec`; `preview.html` reste réservé au prototype local. Ne pas publier un catalogue dans le dépôt.
 
-La feuille ne sera pas modifiée. Le code Apps Script est à garder en lecture seule. Les règles de partage de compte Google Workspace peuvent empêcher un déploiement anonyme; dans ce cas il faudra examiner les options du compte. La publication Pages suppose un dépôt public avec GitHub Free; GitHub recommande notamment un site de moins de 1 Go et annonce une limite souple de 100 Go de bande passante mensuelle.
+La feuille ne sera pas modifiée par l'application. Le code Apps Script est à garder en lecture seule. Chaque utilisateur devra autoriser le script lors de sa première utilisation. Les règles Google Workspace peuvent restreindre les déploiements ou le partage externe. La version privée doit être ouverte via l'URL `/exec` Apps Script, pas par GitHub Pages.
 
 ## Décisions à confirmer / questions ouvertes
 
 - La formule historique et le traitement des votes vides/neutres ont été relevés; conserver cette logique lors des évolutions.
 - Confirmer si l'état « déjà vu » doit rester par navigateur ou être synchronisé avec la feuille (ce dernier choix nécessiterait une écriture autorisée, donc sort du mode lecture seule).
-- Les années de naissance, genres, noms et votes restent dans Google Sheets; la passerelle renvoie les champs nécessaires à l'interface publique. Ils ne sont pas stockés dans le dépôt GitHub.
-- Le site affiche les votes individuels; le propriétaire a confirmé que les données transmises par la passerelle publique peuvent être consultables depuis le site.
-- Déploiement final et URL publique à faire après validation de l'application.
+- Les années de naissance, genres, noms et votes restent dans Google Sheets; le script ne renvoie les champs nécessaires qu'aux comptes ayant accès au classeur. Ils ne sont pas stockés dans le dépôt GitHub.
+- Le site affiche les votes individuels uniquement aux utilisateurs pouvant lire le classeur.
+- Vérifier et révoquer toute ancienne version Apps Script anonyme, puis publier la nouvelle version avec exécution comme utilisateur accédant.
 
 ## État actuel
 
 - Inspection du classeur terminée; aucun changement fait au fichier source.
-- Première interface statique, passerelle Apps Script, jeu de données local ignoré par Git et documentation créés; branchement Google et mise en ligne restent à faire.
-- Le dépôt public `PCORPet/films-corpet` a été créé et relié au dossier local; son contenu n'a pas encore été poussé.
-- Aucun accès direct à une session Google Sheets n'est connecté dans Codex; la future application utilisera l'accès autorisé par Apps Script.
+- Interface Apps Script et lecture sous l'identité de l'utilisateur implémentées dans le dépôt; configuration et déploiement Google restent à faire.
+- Le dépôt public `PCORPet/films-corpet` contient uniquement le code; vérifier que le jeu de données local reste ignoré avant toute publication.
+- Aucune session Google Sheets n'est connectée dans Codex; les opérations de partage et le déploiement doivent être faits dans le compte Google du propriétaire.
 
 ## Reprise par une autre session
 
-Lire ce document puis `README.md`. Vérifier le nom de l'onglet dans `apps-script/Code.gs`, les éventuelles modifications non validées dans le dépôt, puis traiter les questions ouvertes. Ne jamais publier l'instantané du classeur ou déployer l'application avant que l'utilisateur ait vérifié les informations familiales incluses.
+Lire ce document puis `README.md`. Vérifier le nom de l'onglet dans `apps-script/Code.gs`, synchroniser les fichiers HTML Apps Script, vérifier les modifications non validées, puis traiter les questions ouvertes. Ne jamais publier l'instantané du classeur. Après bascule, révoquer toute ancienne URL anonyme.

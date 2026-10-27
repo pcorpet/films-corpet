@@ -1,19 +1,21 @@
 /**
- * Soirée cinéma — public, read-only JSONP bridge for the GitHub Pages frontend.
+ * Soirée cinéma — private-by-spreadsheet read-only web app.
  * Configure SPREADSHEET_ID in Project Settings > Script Properties.
  */
 function doGet(event) {
-  var payload = JSON.stringify(getFilms());
-  var callback = event && event.parameter && event.parameter.callback;
-  if (callback) {
-    // Accept a single JavaScript identifier only. Never evaluate caller-supplied code.
-    if (!/^[A-Za-z_$][A-Za-z0-9_$]{0,100}$/.test(callback)) {
-      return ContentService.createTextOutput('Invalid callback').setMimeType(ContentService.MimeType.TEXT);
-    }
-    return ContentService.createTextOutput(callback + '(' + payload + ');')
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
-  }
-  return ContentService.createTextOutput(payload).setMimeType(ContentService.MimeType.JSON);
+  return HtmlService.createTemplateFromFile('Index').evaluate()
+    .setTitle('Soirée cinéma en famille')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+/** Include an Apps Script HTML file (Styles or Client). */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+/** Called from the authenticated app; Sheets permissions are those of the accessing user. */
+function getFilmsForViewer() {
+  return getFilms();
 }
 
 /** Return only the fields used by the selector. This project never edits Sheets. */
