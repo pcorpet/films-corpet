@@ -3,15 +3,103 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content="0;url=https://script.google.com/macros/s/AKfycbzeWGNB8qK5yOo2kd1C5uUW2wFaGm9KV8EvB9XjiA_YZxOP9i1ym8eb5PLbzZyHfAL8iQ/exec" />
-    <meta name="description" content="Accédez à l'application familiale de sélection de films." />
+    <meta name="theme-color" content="#f5f1e8" />
+    <meta name="description" content="Trouvez le film qui plaira à toute la famille pour votre prochaine soirée cinéma." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Cinéma Corpet" />
     <title>Soirée cinéma en famille</title>
-    <script>
-      window.location.replace("https://script.google.com/macros/s/AKfycbzeWGNB8qK5yOo2kd1C5uUW2wFaGm9KV8EvB9XjiA_YZxOP9i1ym8eb5PLbzZyHfAL8iQ/exec");
-    </script>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <p>Ouverture de l'application…</p>
-    <p><a href="https://script.google.com/macros/s/AKfycbzeWGNB8qK5yOo2kd1C5uUW2wFaGm9KV8EvB9XjiA_YZxOP9i1ym8eb5PLbzZyHfAL8iQ/exec">Ouvrir Soirée cinéma</a></p>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Accueil Soirée cinéma">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>les Corpet <span class="brand-muted">font leur cinéma</span></span>
+        </a>
+        <div class="topbar-actions">
+          <span class="live-status"><span class="status-dot"></span><span id="source-label">Catalogue familial</span></span>
+          <button id="install-app" class="install-button" type="button" hidden>Installer</button>
+        </div>
+      </header>
+
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">LE GRAND ÉCRAN DU SALON</p>
+          <h1>On regarde <em>quoi ce soir&nbsp;?</em></h1>
+          <p class="hero-note">Quelques bons films, tout le monde d’accord.<br />Le choix devrait être la partie facile.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="reel reel-one"><span></span><span></span><span></span></div>
+          <div class="reel reel-two"><span></span><span></span><span></span></div>
+          <div class="ticket"><span>FAMILLE</span><b>★</b><span>SOIRÉE<br />CINÉ</span></div>
+          <div class="spark spark-one">✦</div><div class="spark spark-two">✳</div>
+        </div>
+      </section>
+
+      <section class="controls-panel" aria-label="Choix de la soirée" aria-busy="true" inert>
+        <div class="panel-heading">
+          <div><p class="eyebrow">VOTRE TRIBU CE SOIR</p><h2>Qui est de la partie&nbsp;?</h2></div>
+          <button id="select-all" class="text-button" type="button">Tout le monde</button>
+        </div>
+        <div class="people-list skeleton-people" id="people-list" aria-label="Personnes présentes">
+          <span class="skeleton-chip" style="--chip-width: 104px"></span>
+          <span class="skeleton-chip" style="--chip-width: 88px"></span>
+          <span class="skeleton-chip" style="--chip-width: 116px"></span>
+          <span class="skeleton-chip" style="--chip-width: 94px"></span>
+          <span class="skeleton-chip" style="--chip-width: 108px"></span>
+          <span class="skeleton-chip" style="--chip-width: 84px"></span>
+          <span class="skeleton-chip" style="--chip-width: 100px"></span>
+        </div>
+        <p class="shortcut-hint" id="shortcut-hint">Raccourcis clavier : appuie sur la lettre affichée pour ajouter ou retirer une personne.</p>
+        <details class="advanced-options">
+          <summary>Plus d’options</summary>
+          <div class="filters">
+          <label class="filter search-filter"><span>RECHERCHER</span><input id="search" type="search" placeholder="Un titre, une envie…" autocomplete="off" /></label>
+          <label class="filter"><span>PLAFOND PEGI</span><select id="age-filter"><option value="auto" selected>Automatique</option><option value="6">6 ans</option><option value="10">10 ans</option><option value="12">12 ans</option><option value="16">16 ans</option><option value="18">18 ans</option><option value="99">Sans limite</option></select></label>
+          <label class="filter"><span>DURÉE MAX.</span><select id="duration-filter"><option value="999">Sans limite</option><option value="90">1 h 30</option><option value="120">2 h</option><option value="150" selected>2 h 30</option><option value="180">3 h</option></select></label>
+          <label class="filter"><span>GENRE</span><select id="genre-filter"><option value="">Tous les genres</option></select></label>
+          <label class="filter"><span>À VOIR</span><select id="watched-filter"><option value="unseen" selected>Pas encore vus</option><option value="all">Tout le catalogue</option><option value="seen">Déjà vus</option></select></label>
+          </div>
+        </details>
+      </section>
+
+      <section class="results-section" aria-busy="true">
+        <div class="results-heading">
+          <div><p class="eyebrow">LA SÉLECTION DU SOIR</p><h2 id="results-title">Les favoris de la famille</h2></div>
+          <p class="result-count loading-count" id="result-count" aria-live="polite"><span>Chargement des films…</span><span class="skeleton-count" aria-hidden="true"></span></p>
+        </div>
+        <div class="film-grid skeleton-grid" id="film-grid" aria-live="polite" aria-label="Chargement des films">
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+          <article class="skeleton-card" aria-hidden="true"><span class="skeleton-line skeleton-rank"></span><span class="skeleton-line skeleton-score"></span><span class="skeleton-line skeleton-title"></span><span class="skeleton-line skeleton-subtitle"></span><span class="skeleton-pills"><i></i><i></i><i></i></span><span class="skeleton-divider"></span><span class="skeleton-line skeleton-votes"></span><span class="skeleton-line skeleton-action"></span></article>
+        </div>
+        <div class="empty-state" id="empty-state" hidden>
+          <span>🍿</span><h3>Pas encore de film dans le fauteuil.</h3><p>Élargissez un filtre ou choisissez d’autres personnes pour cette séance.</p>
+        </div>
+        <p class="footnote">Un « non » d’une personne présente écarte le film. Si une personne absente veut le voir, on le garde pour une prochaine séance ; un « non » d’une personne absente ajoute 5 points au score.</p>
+      </section>
+      <footer>
+        <span class="footer-note">Fait pour les soirées qui finissent trop tard.</span>
+        <span id="catalogue-meta">Catalogue familial</span>
+        <a class="spreadsheet-link" id="spreadsheet-link" target="_blank" rel="noopener noreferrer" hidden>Google Sheet ↗</a>
+        <a class="spreadsheet-link" href="https://script.google.com/macros/s/AKfycbxDvLP84Muu9USOK2tMRv-9JPnbfpCKmprKyLczCS00R6gN8yA4ZY8S9ZYzGikZMUY9xQ/exec" target="_blank" rel="noopener noreferrer">Version avec connexion Google ↗</a>
+      </footer>
+    </main>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+      }
+    </script>
   </body>
 </html>

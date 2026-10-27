@@ -6,7 +6,7 @@ Créer un petit site web accessible à la famille pour décider plus facilement 
 
 ## Préférences du produit
 
-- Site réservé aux comptes Google auxquels le classeur est partagé.
+- Deux modes coexistent : PWA publique sur GitHub Pages et Web App Apps Script avec accès via les permissions du Google Sheets.
 - Ne pas ajouter de service payant.
 - Lire le vrai Google Sheets en direct une fois la version de démonstration construite.
 - Utiliser le fichier Excel téléchargé comme source de travail initiale.
@@ -36,39 +36,32 @@ Le classeur de départ est privé et ne doit pas être copié dans le dépôt.
 
 ## Hébergement et connexion Google Sheets sans coût
 
-Architecture retenue : dépôt GitHub public contenant le code source, avec GitHub Pages comme page de redirection vers la Web App Apps Script qui sert l'interface. Le déploiement exige une connexion Google et s'exécute en tant qu'utilisateur accédant. Le script ouvre le classeur avec les droits de cette personne; le partage du Google Sheets avec les seuls comptes familiaux autorisés constitue le contrôle d'accès aux données. L'interface appelle `getFilmsForViewer` via `google.script.run` et ne met pas le catalogue en cache localement.
+Deux déploiements sont conservés. (1) La PWA publique GitHub Pages sert `index.html`, `app.js`, le manifeste et le service worker; elle appelle l'ancien endpoint JSONP Apps Script configuré dans `config.js` et garde une copie hors ligne dans le navigateur. (2) La Web App Apps Script sert `apps-script/Index.html`, `Styles.html` et `Client.html`, s'exécute comme l'utilisateur accédant et lit la feuille via `google.script.run`; l'accès dépend du partage du Google Sheets. Le code Apps Script de cette version est dans `apps-script/Code.gs`.
 
-Le dépôt public ne doit jamais contenir `data/films.json`, un export du classeur, des votes nominatifs, des années de naissance, des genres des membres, de credentials ou d'autres données privées. Un jeu de données local de démonstration est ignoré par Git. Le code de la Web App peut être public, mais il faut révoquer toute ancienne version de déploiement configurée en accès anonyme : changer le code source seul ne protège pas une ancienne URL/version active. Les utilisateurs autorisés peuvent conserver ou copier les informations qu'ils consultent dans leur navigateur.
+Le dépôt public ne doit jamais contenir `data/films.json`, un export du classeur, des votes nominatifs, des années de naissance, des genres des membres ou des credentials. La PWA publique utilise cependant une ancienne passerelle Apps Script en accès anonyme; toute personne connaissant son URL peut demander le catalogue renvoyé, et les visiteurs de la PWA peuvent le conserver hors ligne. Cette version publique est intentionnelle pour maintenir l'ancien mode installable. La Web App Apps Script protégée utilise un autre déploiement et l'identité du visiteur; les utilisateurs autorisés peuvent néanmoins copier ce qu'ils consultent.
 
-Étapes restantes pour relier le vrai classeur :
+## Accès aux deux versions
 
-1. Récupérer l'ID du Google Sheets depuis son URL.
-2. Créer un projet Apps Script et y copier `apps-script/Code.gs`.
-3. Dans les paramètres du projet Apps Script, créer la propriété de script `SPREADSHEET_ID` avec l'ID du classeur.
-4. Le lecteur utilise `Films` pour le catalogue et `Personnes` pour la liste des membres. Le script accepte les propriétés `FILM_SHEET_NAME` et `MEMBERS_SHEET_NAME` pour remplacer ces noms. Dans `Personnes`, les en-têtes attendus sont `Prénom`, `Année de naissance` et `Genre`.
-5. Ajouter au projet Apps Script les fichiers `Code.gs`, `Index.html`, `Styles.html` et `Client.html` depuis `apps-script/`.
-6. Partager le classeur en lecture seule avec chaque compte Gmail familial autorisé.
-7. Mettre à jour la Web App avec accès « Toute personne disposant d'un compte Google » et exécution « Utilisateur accédant à l'application Web ». Ne pas choisir l'accès anonyme.
-8. Tester avec un compte autorisé et un autre compte non partagé. Le premier doit autoriser le script; le second ne doit pas pouvoir lire les données. Désactiver ou supprimer tout ancien déploiement anonyme.
-9. GitHub Pages sert `index.html`, qui redirige vers l'URL `/exec`; `preview.html` reste réservé au prototype local. Ne pas publier un catalogue dans le dépôt.
+- PWA GitHub Pages : https://pcorpet.github.io/films-corpet/ . `config.js` référence l'ancien déploiement JSONP Apps Script : `https://script.google.com/macros/s/AKfycbwT1K38gkuStEZNbTsGNLGB0pX3eSItHievoCVTqO2B9Pmur_uRJHFQt3_boH3nXaSrcQ/exec`.
+- Web App Apps Script avec connexion Google : https://script.google.com/macros/s/AKfycbxDvLP84Muu9USOK2tMRv-9JPnbfpCKmprKyLczCS00R6gN8yA4ZY8S9ZYzGikZMUY9xQ/exec . Elle sert les fichiers de `apps-script/` et doit être configurée avec accès aux comptes Google et exécution comme utilisateur accédant.
 
-La feuille ne sera pas modifiée par l'application. Le code Apps Script est à garder en lecture seule. Chaque utilisateur devra autoriser le script lors de sa première utilisation. Les règles Google Workspace peuvent restreindre les déploiements ou le partage externe. La version privée doit être ouverte via l'URL `/exec` Apps Script, pas par GitHub Pages.
+La feuille ne sera pas modifiée par l'application. Partager le classeur uniquement avec les comptes autorisés pour protéger l'accès via la Web App Apps Script. Ce partage ne protège pas les données renvoyées par l'ancien endpoint anonyme de la PWA. Ne pas remplacer l'URL Apps Script de `config.js` par l'URL de la Web App protégée : l'appel JSONP de la PWA et l'accès protégé par `google.script.run` sont deux modes distincts. Chaque version a un lien en pied de page vers l'autre.
 
 ## Décisions à confirmer / questions ouvertes
 
 - La formule historique et le traitement des votes vides/neutres ont été relevés; conserver cette logique lors des évolutions.
 - Confirmer si l'état « déjà vu » doit rester par navigateur ou être synchronisé avec la feuille (ce dernier choix nécessiterait une écriture autorisée, donc sort du mode lecture seule).
-- Les années de naissance, genres, noms et votes restent dans Google Sheets; le script ne renvoie les champs nécessaires qu'aux comptes ayant accès au classeur. Ils ne sont pas stockés dans le dépôt GitHub.
-- Le site affiche les votes individuels uniquement aux utilisateurs pouvant lire le classeur.
-- Vérifier et révoquer toute ancienne version Apps Script anonyme, puis publier la nouvelle version avec exécution comme utilisateur accédant.
+- La version Apps Script protégée affiche les votes aux comptes pouvant lire le classeur.
+- La PWA publique appelle l'ancien endpoint Apps Script anonyme et expose les données de sa réponse à toute personne qui connaît l'URL. Maintenir cette passerelle active est nécessaire au mode PWA actuel.
 
 ## État actuel
 
 - Inspection du classeur terminée; aucun changement fait au fichier source.
-- Interface Apps Script et lecture sous l'identité de l'utilisateur implémentées dans le dépôt; configuration et déploiement Google restent à faire.
-- Le dépôt public `PCORPet/films-corpet` contient uniquement le code; vérifier que le jeu de données local reste ignoré avant toute publication.
-- Aucune session Google Sheets n'est connectée dans Codex; les opérations de partage et le déploiement doivent être faits dans le compte Google du propriétaire.
+- PWA GitHub Pages restaurée depuis l'historique Git avec manifeste et service worker; elle utilise l'ancien endpoint Apps Script.
+- L'utilisateur indique avoir copié le dossier `apps-script/` dans Apps Script et déployé la Web App avec l'URL documentée.
+- Le dépôt public `PCORPet/films-corpet` contient le code et les deux liens; aucun jeu de données familial ne doit y être publié.
+- L'ancien endpoint anonyme est maintenu actif pour le mode PWA; la version PWA transmet au navigateur les données de sa réponse.
 
 ## Reprise par une autre session
 
-Lire ce document puis `README.md`. Vérifier le nom de l'onglet dans `apps-script/Code.gs`, synchroniser les fichiers HTML Apps Script, vérifier les modifications non validées, puis traiter les questions ouvertes. Ne jamais publier l'instantané du classeur. Après bascule, révoquer toute ancienne URL anonyme.
+Lire ce document puis `README.md`. Vérifier le nom de l'onglet dans `apps-script/Code.gs`, synchroniser les fichiers HTML Apps Script, vérifier les modifications non validées, puis traiter les questions ouvertes. Ne jamais publier l'instantané du classeur. Conserver les deux déploiements Apps Script distincts : l'ancien anonyme pour la PWA et le nouveau avec connexion Google pour la Web App protégée.

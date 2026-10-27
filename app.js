@@ -1,4 +1,7 @@
 const FAMILY_KEY = "films-corpet-seen-v1";
+const CACHE_KEY = "films-corpet-catalogue-v1";
+const OFFLINE_KEY = "films-corpet-catalogue-offline-v1";
+const CACHE_TTL = 3 * 60 * 1000;
 const state = { data: null, selectedMembers: new Set(), films: [], genres: [], seen: new Set() };
 const el = (id) => document.getElementById(id);
 const touchInput = navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia("(pointer: coarse), (max-width: 600px)").matches);
@@ -8,27 +11,56 @@ function readSeen() {
   catch { return new Set(); }
 }
 
+function loadJsonp(url) {
+  return new Promise((resolve, reject) => {
+    const callback = `__filmData_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    const script = document.createElement("script");
+    const timer = setTimeout(() => finish(new Error("Le catalogue ne répond pas.")), 15000);
+    function finish(error, value) {
+      clearTimeout(timer);
+      delete window[callback];
+      script.remove();
+      error ? reject(error) : resolve(value);
+    }
+    window[callback] = (value) => finish(null, value);
+    script.onerror = () => finish(new Error("Impossible de charger les films depuis Google Sheets."));
+    script.src = `${url}${url.includes("?") ? "&" : "?"}callback=${callback}`;
+    document.head.appendChild(script);
+  });
+}
+
 async function loadCatalogue() {
-  // In the Apps Script Web App, data is read server-side under the signed-in
-  // viewer's Google identity. Do not persist this private catalogue locally.
-  if (window.google?.script?.run) {
-    el("source-label").textContent = "Connexion Google";
-    return new Promise((resolve, reject) => {
-      window.google.script.run
-        .withSuccessHandler((data) => {
-          el("source-label").textContent = "Feuille familiale";
-          resolve(data);
-        })
-        .withFailureHandler((error) => reject(new Error(error?.message || "Accès au catalogue refusé. Vérifiez que votre compte a accès au Google Sheets.")))
-        .getFilmsForViewer();
-    });
+  const apiUrl = String(window.FILM_API_URL || "").trim();
+  if (!apiUrl) {
+    const response = await fetch("data/films.json");
+    if (!response.ok) throw new Error("Aucun jeu de données local. Configurez la connexion Google Sheets ou placez data/films.json pour travailler hors ligne.");
+    el("source-label").textContent = "Aperçu local";
+    return response.json();
   }
 
-  // Local development only. Published data access goes through Apps Script above.
-  const response = await fetch("data/films.json");
-  if (!response.ok) throw new Error("Aucun jeu de données local. Placez data/films.json pour l'aperçu local ou ouvrez la Web App Apps Script pour consulter le catalogue familial.");
-  el("source-label").textContent = "Aperçu local";
-  return response.json();
+  try {
+    let cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || "null"); } catch { /* Le cache de session est facultatif. */ }
+    if (cached && Date.now() - cached.savedAt < CACHE_TTL) {
+      el("source-label").textContent = "Feuille familiale";
+      return cached.data;
+    }
+    const data = await loadJsonp(apiUrl);
+    const saved = JSON.stringify({ savedAt: Date.now(), data });
+    try { sessionStorage.setItem(CACHE_KEY, saved); } catch { /* Le cache de session est facultatif. */ }
+    try { localStorage.setItem(OFFLINE_KEY, saved); } catch { /* Le cache hors ligne est facultatif. */ }
+    el("source-label").textContent = "Feuille familiale";
+    return data;
+  } catch (error) {
+    try {
+      const cached = JSON.parse(localStorage.getItem(OFFLINE_KEY) || "null");
+      if (cached?.data) {
+        el("source-label").textContent = "Catalogue hors ligne";
+        return cached.data;
+      }
+    } catch { /* Le cache a peut-être été effacé ou est illisible. */ }
+    throw error;
+  }
 }
 
 function escapeHtml(value) {
