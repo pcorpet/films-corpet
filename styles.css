@@ -14,6 +14,16 @@
   --accent: #df693b;
   --accent-pale: #f8e4d8;
   --shape: 17px;
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --title-case: none;
+  --title-weight: 700;
+  --title-tracking: -3.8px;
+  --panel-space: 27px 30px 25px;
+  --card-space: 18px 18px 15px;
+  --content-gap: 13px;
+  --chip-shape: 999px;
+  --results-space: 41px 0 26px;
 }
 
 :root[data-theme="nuit"] { color-scheme: dark; --ink: #f4efe3; --muted: #b4ad9f; --paper: #171b25; --card: #222836; --line: #394253; --orange: #f08a62; --orange-pale: #50332f; --green: #8fc5a8; --green-pale: #2c443d; --violet: #c3b9ec; --shadow: 0 15px 50px #080b1280; --accent: #f08a62; --accent-pale: #50332f; }
@@ -24,12 +34,21 @@
 :root[data-theme="rose"] { --ink: #402d39; --muted: #887681; --paper: #f7eaf0; --card: #fff9fb; --line: #ead3df; --orange: #b65376; --orange-pale: #f6dce7; --green: #647b73; --green-pale: #e0ebe5; --violet: #745d8a; --accent: #b65376; --accent-pale: #f6dce7; }
 :root[data-theme="mono"] { --ink: #202020; --muted: #727272; --paper: #ededed; --card: #fff; --line: #d2d2d2; --orange: #353535; --orange-pale: #e8e8e8; --green: #444; --green-pale: #e5e5e5; --violet: #555; --accent: #353535; --accent-pale: #e8e8e8; --shape: 3px; }
 
+/* Chaque ambiance modifie aussi la typographie, la hiérarchie et la densité. */
+:root[data-theme="nuit"] { --font-body: "Trebuchet MS", Arial, sans-serif; --font-display: "Trebuchet MS", Arial, sans-serif; --title-case: uppercase; --title-weight: 800; --title-tracking: -2.4px; --panel-space: 32px 34px; --card-space: 21px; --content-gap: 18px; --chip-shape: 8px; --results-space: 52px 0 32px; }
+:root[data-theme="retro"] { --font-body: Georgia, "Times New Roman", serif; --font-display: Georgia, "Times New Roman", serif; --title-case: uppercase; --title-weight: 700; --title-tracking: 1.2px; --panel-space: 24px; --card-space: 16px; --content-gap: 10px; --chip-shape: 4px; }
+:root[data-theme="minimal"] { --font-body: Arial, sans-serif; --font-display: Arial, sans-serif; --title-weight: 400; --title-tracking: -1.6px; --panel-space: 22px 24px; --card-space: 16px; --content-gap: 10px; --chip-shape: 6px; --results-space: 30px 0 20px; }
+:root[data-theme="pop"] { --font-body: "Trebuchet MS", Arial, sans-serif; --font-display: "Trebuchet MS", Arial, sans-serif; --title-case: uppercase; --title-weight: 900; --title-tracking: -1px; --panel-space: 30px; --card-space: 21px 20px; --content-gap: 16px; --chip-shape: 999px; }
+:root[data-theme="foret"] { --font-body: Georgia, "Times New Roman", serif; --font-display: Georgia, "Times New Roman", serif; --title-weight: 600; --title-tracking: -2.8px; --panel-space: 34px 36px 30px; --card-space: 22px; --content-gap: 16px; --chip-shape: 10px; --results-space: 50px 0 34px; }
+:root[data-theme="rose"] { --font-body: "Palatino Linotype", Palatino, Georgia, serif; --font-display: "Palatino Linotype", Palatino, Georgia, serif; --title-weight: 500; --title-tracking: -3px; --panel-space: 30px 32px; --card-space: 22px 20px; --content-gap: 15px; --chip-shape: 14px; }
+:root[data-theme="mono"] { --font-body: "Courier New", monospace; --font-display: "Courier New", monospace; --title-case: uppercase; --title-weight: 700; --title-tracking: 0; --panel-space: 20px; --card-space: 14px; --content-gap: 9px; --chip-shape: 2px; }
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
 .page-shell { max-width: 1160px; padding: 0 36px; margin: 0 auto; }
@@ -79,12 +98,13 @@ body {
 .hero-copy { padding: 37px 0 41px; position: relative; z-index: 2; }
 .eyebrow { font-size: 10px; letter-spacing: 1.75px; font-weight: 700; color: var(--accent); margin: 0 0 13px; }
 .hero h1 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--font-display);
   font-size: clamp(48px, 6vw, 74px);
   line-height: .98;
-  letter-spacing: -3.8px;
+  letter-spacing: var(--title-tracking);
   margin: 0;
-  font-weight: 700;
+  font-weight: var(--title-weight);
+  text-transform: var(--title-case);
 }
 .hero h1 em { display: block; font-weight: 400; color: var(--green); letter-spacing: -3px; }
 .hero-note { color: var(--muted); font-size: 14px; line-height: 1.7; margin: 21px 0 0; }
@@ -128,16 +148,16 @@ body {
 .spark { position: absolute; color: var(--orange); font-size: 24px; }
 .spark-one { right: 10px; top: 8px; }
 .spark-two { left: 103px; top: 38px; color: var(--green); font-size: 18px; }
-.controls-panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--shape); padding: 27px 30px 25px; box-shadow: var(--shadow); }
+.controls-panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--shape); padding: var(--panel-space); box-shadow: var(--shadow); }
 .panel-heading, .results-heading { display: flex; align-items: flex-end; justify-content: space-between; }
-.panel-heading h2, .results-heading h2 { font-size: 21px; letter-spacing: -.65px; margin: 0; font-weight: 700; }
+.panel-heading h2, .results-heading h2 { font-family: var(--font-display); font-size: 21px; letter-spacing: -.65px; margin: 0; font-weight: var(--title-weight); text-transform: var(--title-case); }
 .panel-heading .eyebrow, .results-heading .eyebrow { font-size: 9px; margin-bottom: 8px; }
 .text-button { border: 0; background: none; color: var(--green); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; padding: 6px; }
 .people-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 .person-chip {
   border: 1px solid var(--line);
   background: #fff;
-  border-radius: 999px;
+  border-radius: var(--chip-shape);
   padding: 7px 13px 7px 8px;
   display: flex;
   align-items: center;
@@ -164,17 +184,17 @@ body {
 .filter > span { font-size: 8px; font-weight: 700; letter-spacing: 1.2px; color: #89877c; }
 .filter input, .filter select { width: 100%; height: 40px; border: 1px solid var(--line); border-radius: 8px; padding: 0 11px; background: #fffdf9; color: var(--ink); font-family: inherit; font-size: 12px; font-weight: 500; outline: none; }
 .filter input:focus, .filter select:focus { border-color: #7b9a83; box-shadow: 0 0 0 3px #78977f20; }
-.results-section { padding: 41px 0 26px; }
+.results-section { padding: var(--results-space); }
 .results-heading { margin-bottom: 17px; }
 .result-count { font-size: 11px; color: var(--muted); margin: 0 2px 3px; }
-.film-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
-.film-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--shape); padding: 18px 18px 15px; min-height: 170px; position: relative; transition: transform .16s, box-shadow .16s; display: flex; flex-direction: column; }
+.film-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--content-gap); }
+.film-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--shape); padding: var(--card-space); min-height: 170px; position: relative; transition: transform .16s, box-shadow .16s; display: flex; flex-direction: column; }
 .film-card:hover { transform: translateY(-2px); box-shadow: 0 10px 23px #3025120e; }
 .film-card.top-pick { border-color: #d9bd85; background: #fffcf3; }
 .film-card-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .rank { font-size: 9px; letter-spacing: 1px; color: #9a978b; font-weight: 700; }
 .score-pill { background: var(--green-pale); color: var(--green); font-size: 10px; font-weight: 700; border-radius: 999px; padding: 6px 9px; white-space: nowrap; }
-.film-card h3 { font-size: 17px; letter-spacing: -.45px; line-height: 1.25; margin: 13px 0 8px; }
+.film-card h3 { font-family: var(--font-display); font-size: 17px; letter-spacing: -.45px; line-height: 1.25; margin: 13px 0 8px; font-weight: var(--title-weight); text-transform: var(--title-case); }
 .genre-label { color: var(--muted); font-size: 11px; margin: 0; }
 .film-meta { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
 .meta-pill { background: #f1eee7; border-radius: 5px; padding: 5px 7px; font-size: 9px; color: #65645b; }
