@@ -1,10 +1,30 @@
 const FAMILY_KEY = "films-corpet-seen-v1";
 const CACHE_KEY = "films-corpet-catalogue-v1";
 const OFFLINE_KEY = "films-corpet-catalogue-offline-v1";
+const THEME_KEY = "films-corpet-theme-v1";
+const THEMES = new Set(["cinema", "nuit", "retro", "minimal", "pop", "foret", "rose", "mono"]);
 const CACHE_TTL = 3 * 60 * 1000;
 const state = { data: null, selectedMembers: new Set(), films: [], genres: [], seen: new Set() };
 const el = (id) => document.getElementById(id);
 const touchInput = navigator.maxTouchPoints > 0 || (window.matchMedia && window.matchMedia("(pointer: coarse), (max-width: 600px)").matches);
+
+function setupThemePicker() {
+  const picker = el("theme-select");
+  let theme = "cinema";
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (THEMES.has(saved)) theme = saved;
+  } catch { /* Le thème reste modifiable pendant cette session. */ }
+  document.documentElement.dataset.theme = theme;
+  picker.value = theme;
+  picker.addEventListener("change", () => {
+    const selected = THEMES.has(picker.value) ? picker.value : "cinema";
+    document.documentElement.dataset.theme = selected;
+    try { localStorage.setItem(THEME_KEY, selected); } catch { /* Le thème reste appliqué jusqu’à la fermeture. */ }
+  });
+}
+
+setupThemePicker();
 
 function readSeen() {
   try { return new Set(JSON.parse(localStorage.getItem(FAMILY_KEY) || "[]")); }
